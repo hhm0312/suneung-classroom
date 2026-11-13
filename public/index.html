@@ -272,20 +272,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
         <button class="textbtn" id="bellTest">본령 종소리 들어보기</button>
       </div>
     </section>
-    <section class="snd" id="cardListen">
-      <div class="snd-head">
-        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4.5" height="6.5" rx="1.5"/><rect x="16.5" y="14" width="4.5" height="6.5" rx="1.5"/></svg></span>
-        <span class="tx"><b>영어 듣기</b><small id="listenSub">고른 회차가 3교시에 방송돼요</small></span>
-        <button class="pill" id="listenOn" aria-pressed="true">켜짐</button>
-      </div>
-      <div class="snd-body">
-        <div class="vol"><input type="range" id="listenVol" min="0" max="100" aria-label="듣기 음원 크기"><output id="listenVolOut"></output></div>
-        <div class="seg" id="years"></div>
-        <div class="rounds" id="rounds"></div>
-        <p class="note">영어 본령 13:10에 시작해 약 26분 동안 방송돼요. 중간 시각으로 넘어가면 그 지점부터 이어서 나와요.</p>
-        <button class="textbtn" id="listenGo">영어 본령부터 시작</button>
-      </div>
-    </section>
     <section class="snd" id="cardNoise">
       <div class="snd-head">
         <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 9h11a3 3 0 1 0-3-3"/><path d="M3 14h15a3 3 0 1 1-3 3"/><path d="M3 19h6"/></svg></span>
@@ -298,6 +284,20 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
         </div>
         <div class="vol"><input type="range" id="noiseVol" min="0" max="100" aria-label="소음 크기"><output id="noiseVolOut"></output></div>
         <p class="note" id="presetNote"></p>
+      </div>
+    </section>
+    <section class="snd" id="cardListen">
+      <div class="snd-head">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4.5" height="6.5" rx="1.5"/><rect x="16.5" y="14" width="4.5" height="6.5" rx="1.5"/></svg></span>
+        <span class="tx"><b>영어 듣기</b><small id="listenSub">고른 회차가 3교시에 방송돼요</small></span>
+        <button class="pill" id="listenOn" aria-pressed="true">켜짐</button>
+      </div>
+      <div class="snd-body">
+        <div class="vol"><input type="range" id="listenVol" min="0" max="100" aria-label="듣기 음원 크기"><output id="listenVolOut"></output></div>
+        <div class="seg" id="years"></div>
+        <div class="rounds" id="rounds"></div>
+        <p class="note">영어 본령 13:10에 시작해 약 26분 동안 방송돼요. 중간 시각으로 넘어가면 그 지점부터 이어서 나와요.</p>
+        <button class="textbtn" id="listenGo">영어 본령부터 시작</button>
       </div>
     </section>
   </div>
