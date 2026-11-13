@@ -1,9 +1,3 @@
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="실제 수능 시간표와 타종으로 진행되는 3D 고사실. 같은 교실에 들어온 사람들과 함께, 각자 자기 진도로 시험을 봅니다.">
 <title>온라인 수능 고사장</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -210,8 +204,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
   .clock{padding:0 4px 0 8px}
 }
 </style>
-</head>
-<body>
 
 <div id="scene"></div>
 <div class="loading" id="loading"><b>온라인 수능 고사장</b><div class="lbar"><i></i></div><span>고사실을 준비하는 중</span></div>
@@ -668,11 +660,11 @@ const deskTop=mat(0xB8733A,{roughness:.45}), deskEdge=mat(0x8E5A2E,{roughness:.5
 const seatM=mat(0x1F6B45,{roughness:.55}), seatDark=mat(0x154A30,{roughness:.6});
 const paperM=mat(0xFFFFFF,{roughness:.9}), omrCardM=mat(0xF7B9C6,{roughness:.9});
 const HOODIES=[0x2F4E9B,0xD24B3E,0xE9B23A,0x2E8C83,0x7B4FA8,0xE77AA3,0x3C3F46,0x5DA25A,0xF08A3C];
-const skinM=mat(0xF1C9A5,{roughness:.6}), hairM=mat(0x2B1D16,{roughness:.45}), pantsM=mat(0x2E3340,{roughness:.8}), shoeM=mat(0x1C1C1E,{roughness:.6});
+const skinM=mat(0xF1C9A5,{roughness:.6}), hairM=mat(0x2B1D16,{roughness:.45}), pantsM=mat(0x2E3340,{roughness:.8}), shoeM=mat(0x1C1C1E,{roughness:.6}), eyeM=mat(0x1C140F,{roughness:.35});
 const PENCIL=[0xE45A4F,0x3D7BD9,0xF2C230,0x45A36B,0x9B59C9];
 const hitM=new THREE.MeshBasicMaterial();
 const SEATS=[];   // {i,x,z,sx,sz,pm,om,hit,npc}
-COLS.forEach((x,ci)=>ROWS.forEach((z,ri)=>{ // 복도(입구) 쪽 줄부터 1번, 앞줄부터 뒷줄로, 창가 쪽으로 갈수록 번호가 늘어난다
+COLS.forEach((x,ci)=>ROWS.forEach((z,ri)=>{ // 복도(입구) 쪽 줄부터 1번, 앞줄부터 뒷줄로, 창가 쪽으로 갈수록 번호가 늘어난다 // 입구(뒤쪽)에서 1번, 칠판 쪽으로 번호가 늘어난다
   box(0.78,0.05,0.52,deskTop,x,0.74,z); box(0.78,0.03,0.52,deskEdge,x,0.705,z);
   for(const dx of [-0.34,0.34]) for(const dz of [-0.22,0.22]) box(0.035,0.7,0.035,metal,x+dx,0.35,z+dz);
   box(0.7,0.14,0.03,metal,x,0.6,z-0.24);
@@ -708,6 +700,7 @@ function makeAvatar(color){
   const head=new THREE.Mesh(new THREE.SphereGeometry(0.27,28,20),skinM); head.position.y=0.22; head.castShadow=true; headG.add(head);
   const hair=new THREE.Mesh(new THREE.SphereGeometry(0.285,28,20,0,Math.PI*2,0,Math.PI*0.62),hairM); hair.position.y=0.23; hair.rotation.x=0.3; hair.castShadow=true; headG.add(hair);
   for(const s of [-1,1]){ const ear=new THREE.Mesh(new THREE.SphereGeometry(0.05,10,8),skinM); ear.position.set(s*0.27,0.2,0.02); headG.add(ear); }
+  for(const s of [-1,1]){ const eye=new THREE.Mesh(new THREE.SphereGeometry(0.028,10,8),eyeM); eye.position.set(s*0.095,0.24,-0.245); headG.add(eye); }
   const arms=[];
   for(const s of [-1,1]){
     const ag=new THREE.Group(); ag.position.set(s*0.25,0.96,0);
@@ -1406,6 +1399,3 @@ Promise.race([fontReady,new Promise(r=>setTimeout(r,2500))]).then(()=>{
     toast('바닥을 누르면 걸어가요',matchMedia('(hover:hover)').matches?'빈 자리를 누르면 가서 앉아요 · WASD나 방향키로도 움직여요':'빈 자리를 누르면 가서 앉아요'); },500);
 });
 </script>
-
-</body>
-</html>
