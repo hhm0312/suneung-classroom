@@ -685,7 +685,7 @@ COLS.forEach((x,ci)=>ROWS.forEach((z,ri)=>{ // 복도(입구) 쪽 줄부터 1번
   const om=box(0.2,0.006,0.38,omrCardM,x+0.22,0.771,z+0.04,false); om.rotation.y=-0.08;
   pm.visible=om.visible=false;
   // 자리를 누르기 쉽게 책상과 의자를 덮는 보이지 않는 상자
-  const hit=new THREE.Mesh(new THREE.BoxGeometry(1.7,1.3,1.3),hitM); hit.position.set(x,0.65,z+0.3); hit.visible=false;
+  const hit=new THREE.Mesh(new THREE.BoxGeometry(1.7,1.3,1.3),hitM); hit.position.set(x,0.65,z+0.3); hit.visible=false; scene.add(hit); // 클릭 판정용 — 씬에 넣어야 레이캐스트가 실제 위치에서 맞는다
   const i=SEATS.length; hit.userData.seat=i;
   SEATS.push({i,x,z,sx:x,sz:z+0.5,pm,om,hit,npc:null});
 }));
