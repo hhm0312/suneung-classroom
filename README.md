@@ -1,4 +1,4 @@
-# 수능 고사실 3D
+# 온라인 수능 고사장
 
 실제 수능 시간표대로 타종과 안내 방송이 울리는 3D 고사실입니다.
 같은 주소로 들어온 사람들이 한 교실에 함께 보이고, 빈 자리에 앉아 각자 자기 진도로 시험을 봅니다.
@@ -37,7 +37,7 @@ GitHub에서 새 저장소를 만들고(예: `suneung-classroom`) 이 폴더의 
 ```bash
 git init
 git add .
-git commit -m "수능 고사실 3D"
+git commit -m "온라인 수능 고사장"
 git branch -M main
 git remote add origin https://github.com/<내 아이디>/suneung-classroom.git
 git push -u origin main
