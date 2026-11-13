@@ -88,6 +88,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold-hi);outlin
 /* ── 설정 시트 ── */
 .sheet{position:fixed;z-index:10;right:var(--gr);top:calc(var(--gt) + 60px);width:390px;max-height:calc(100% - var(--gt) - 76px);overflow:auto;border-radius:24px;padding:22px 20px 20px;background:var(--glass-strong)}
 .online{position:relative;display:flex;align-items:center;gap:7px;height:32px;padding:0 10px;margin:0 4px;border-radius:10px;background:var(--card);font-size:13px;font-weight:600;white-space:nowrap}
+.roomSel select{background:transparent;border:none;color:inherit;font:inherit;font-weight:600;cursor:pointer;outline:none}
+.roomSel select option{color:#1a1a1a}
 .online i{width:8px;height:8px;border-radius:50%;background:var(--faint)}
 .online.on i{background:#5BD08A;box-shadow:0 0 0 3px rgba(91,208,138,.22)}
 .me-box{display:grid;gap:8px;padding:0 4px 18px;margin-bottom:16px;border-bottom:1px solid var(--line)}
@@ -223,6 +225,14 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     </button>
   </div>
   <div class="bar-r glass">
+    <label class="online roomSel" data-tip="고사실 바꾸기 — 같은 고사실끼리만 서로 보여요">
+      <select id="roomSel" aria-label="고사실 선택">
+        <option value="01">고사실 1</option>
+        <option value="02">고사실 2</option>
+        <option value="03">고사실 3</option>
+        <option value="04">고사실 4</option>
+      </select>
+    </label>
     <span class="online" id="online" data-tip=""><i></i><b id="onlineN">혼자</b></span>
     <span class="clock"><b id="clockText">--:--:--</b><small>남은 시간</small></span>
     <span class="sep"></span>
@@ -808,6 +818,10 @@ try{ const v=JSON.parse(localStorage.getItem('suneung-me')||'null'); if(v){ ME.n
 if(!ME.name) ME.name=`${NAMES_A[Math.floor(Math.random()*10)]} ${NAMES_B[Math.floor(Math.random()*10)]} ${10+Math.floor(Math.random()*90)}`;
 const saveMe=()=>{ try{ localStorage.setItem('suneung-me',JSON.stringify({name:ME.name,color:ME.color})); }catch(e){} };
 saveMe();
+// ── 고사실(방) 선택: 같은 고사실 번호끼리만 서로 보인다 ──
+let ROOM='01';
+try{ const v=localStorage.getItem('suneung-room'); if(v) ROOM=v; }catch(e){}
+const saveRoom=()=>{ try{ localStorage.setItem('suneung-room',ROOM); }catch(e){} };
 const meAv=makeAvatar(HOODIES[ME.color]), meTag=makeTag();
 meAv.g.position.set(ME.x,0,ME.z); meAv.g.rotation.y=ME.ry;
 const playerPos=new THREE.Vector3(ME.x,1,ME.z);
@@ -821,8 +835,8 @@ function showMarker(x,z){ marker.position.x=x; marker.position.z=z; markerT=1; }
 
 // ── 다른 접속자와 빈 자리 채우는 가상 수험생 ──
 const PEERS=new Map();   // id → {id,name,color,x,z,ry,seat,prog,exam,av,tag}
-const NPC_TARGET=12;     // 교실에 늘 이 정도 인원이 앉아 있도록 가상 수험생을 채운다
-const NPC_ORDER=[6,18,2,12,22,8,16,0,24,10,14,4,20,1,23,7,17,11,3,21,13,9,19,5,15];
+const NPC_TARGET=0;     // 가상 수험생으로 자리를 채우지 않는다 (실제 접속자만 보임)
+const NPC_ORDER=[18,16,10,21,27,6,5,11,14,9,24,12,19,15,25,1,13,2,17,26,4,22,7,8,23,0,3,20];
 const npcAv=SEATS.map(s=>{ const a=makeAvatar(HOODIES[(s.i*7+3)%9]); a.g.position.set(s.sx,0,s.sz); a.g.visible=false; return a; });
 let npcSeats=new Set();
 function seatOwner(i){
@@ -984,15 +998,25 @@ function addPeer(p){
 }
 function removePeer(id){ const p=PEERS.get(id); if(!p) return; scene.remove(p.av.g); scene.remove(p.tag.s); p.tag.t.dispose(); PEERS.delete(id); }
 function clearPeers(){ [...PEERS.keys()].forEach(removePeer); recomputeSeats(); }
+const roomLabel=r=>`고사실 ${parseInt(r,10)}`;
 function setOnline(on,label){
   NET.online=on; $('online').classList.toggle('on',on);
   $('onlineN').textContent=on?`${PEERS.size+1}명`:(label||'혼자');
-  $('online').dataset.tip=on?'지금 이 고사실에 있는 사람':'다른 사람과 연결되지 않았어요. 혼자서도 그대로 쓸 수 있어요';
+  $('online').dataset.tip=on?`지금 ${roomLabel(ROOM)}에 있는 사람`:'다른 사람과 연결되지 않았어요. 혼자서도 그대로 쓸 수 있어요';
+}
+function switchRoom(r){
+  if(r===ROOM) return;
+  ROOM=r; saveRoom();
+  const old=NET.ws; NET.ws=null; clearInterval(NET.ping); clearTimeout(NET.timer); NET.full=false; NET.tries=0;
+  if(old){ try{ old.close(); }catch(e){} }
+  clearPeers(); setOnline(false);
+  toast(`${roomLabel(ROOM)}로 이동했어요`,'');
+  connect();
 }
 function connect(){
   clearTimeout(NET.timer);
   if(!/^https?:$/.test(location.protocol)){ setOnline(false); return; }
-  let ws; try{ ws=new WebSocket(`${location.protocol==='https:'?'wss':'ws'}://${location.host}/ws?room=01`); }catch(e){ retry(); return; }
+  let ws; try{ ws=new WebSocket(`${location.protocol==='https:'?'wss':'ws'}://${location.host}/ws?room=${ROOM}`); }catch(e){ retry(); return; }
   NET.ws=ws;
   ws.onopen=()=>{ NET.tries=0; const p=myProg(); lastProg=p.prog+p.exam;
     ws.send(JSON.stringify({t:'hello',name:ME.name,color:ME.color,x:ME.x,z:ME.z,ry:ME.ry,seat:ME.seat,...p}));
@@ -1250,6 +1274,7 @@ function applySound(){
   if(!SET.sound||!SET.listenOn) stopListening(); else syncListening();
 }
 function setSheet(open){ if(open) setMenu(false); $('sheet').hidden=!open; $('setBtn').setAttribute('aria-pressed',open); if(open) renderSheet(); }
+$('roomSel').value=ROOM; $('roomSel').onchange=e=>switchRoom(e.target.value);
 $('setBtn').onclick=()=>setSheet($('sheet').hidden);
 $('sheetClose').onclick=()=>setSheet(false);
 $('masterSw').onclick=()=>{ SET.sound=!SET.sound; ensureAudio(); applySound(); };
