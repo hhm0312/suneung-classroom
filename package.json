@@ -1,0 +1,13 @@
+{
+  "name": "suneung-classroom",
+  "version": "1.0.0",
+  "private": true,
+  "description": "수능 고사실 3D 메타버스",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.160.0"
+  }
+}
